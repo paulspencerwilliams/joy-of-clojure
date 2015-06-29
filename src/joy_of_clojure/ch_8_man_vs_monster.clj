@@ -5,22 +5,22 @@
 (declare grok-attrs grok-props)
 
 (defmacro domain [name & body]
-  `{:tag :domain
-   :attrs {:name (str '~name)}
-   :content [~@(handle-things body)]})
+  `{:tag     :domain
+    :attrs   {:name (str '~name)}
+    :content [~@(handle-things body)]})
 
 (defn handle-things [things]
-      (for [t things]
-        {:tag :thing,
-         :attrs (grok-attrs (take-while (comp not vector?) t))
-         :content (if-let [c (grok-props (drop-while (comp not vector?) t))]
-                    [c]
-                    [])}))
+  (for [t things]
+    {:tag     :thing,
+     :attrs   (grok-attrs (take-while (comp not vector?) t))
+     :content (if-let [c (grok-props (drop-while (comp not vector?) t))]
+                [c]
+                [])}))
 
 
 (defmacro grouping [name & body]
-  `{:tag :grouping,
-    :attrs {:name (str '~name)},
+  `{:tag     :grouping,
+    :attrs   {:name (str '~name)},
     :content [~@(handle-things body)]})
 
 
@@ -29,15 +29,15 @@
   (into {:name (str (first attrs))}
         (for [a (rest attrs)]
           (cond
-            (list? a)[:isa (str (second a))]
-                   (string? a) [:comment a]))))
+            (list? a) [:isa (str (second a))]
+            (string? a) [:comment a]))))
 
 (defn grok-props [props]
   (when props
-    {:tag :properties, :attrs  nil,
+    {:tag     :properties, :attrs nil,
      :content (apply vector (for [p props]
-                              {:tag :property,
-                               :attrs {:name (str (first p))},
+                              {:tag     :property,
+                               :attrs   {:name (str (first p))},
                                :content nil}))}))
 
 
