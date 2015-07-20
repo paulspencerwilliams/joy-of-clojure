@@ -1,13 +1,20 @@
 (ns joy-of-clojure.ch-8-man-vs-monster)
 
-(declare handle-things)
 
-(declare grok-attrs grok-props)
 
 (defmacro domain [name & body]
   `{:tag     :domain
-    :attrs   {:name (str '~name)}
+             :attrs   {:name (str '~name)}
+    :content [~@body]})
+
+(declare handle-things)
+
+(defmacro grouping [name & body]
+  `{:tag     :grouping,
+    :attrs   {:name (str '~name)},
     :content [~@(handle-things body)]})
+
+(declare grok-attrs grok-props)
 
 (defn handle-things [things]
   (for [t things]
@@ -16,14 +23,6 @@
      :content (if-let [c (grok-props (drop-while (comp not vector?) t))]
                 [c]
                 [])}))
-
-
-(defmacro grouping [name & body]
-  `{:tag     :grouping,
-    :attrs   {:name (str '~name)},
-    :content [~@(handle-things body)]})
-
-
 
 (defn grok-attrs [attrs]
   (into {:name (str (first attrs))}
